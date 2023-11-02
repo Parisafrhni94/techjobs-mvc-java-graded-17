@@ -1,3 +1,4 @@
+/* ListController */
 package org.launchcode.techjobsmvc.controllers;
 
 import org.launchcode.techjobsmvc.models.Job;
@@ -18,16 +19,17 @@ import java.util.HashMap;
 @RequestMapping(value = "list")
 public class ListController {
 
-    static HashMap<String, String> columnChoices = new HashMap<>();
+    static HashMap<String, String> columnChoices = new HashMap<>(); //HashMap is used to store options for filtering jobs
     static HashMap<String, Object> tableChoices = new HashMap<>();
 
-    public ListController () {
+    public ListController () {//Constructor that initializes the columnChoices and tableChoices HashMaps with some default values.
         columnChoices.put("all", "All");
         columnChoices.put("employer", "Employer");
         columnChoices.put("location", "Location");
         columnChoices.put("positionType", "Position Type");
         columnChoices.put("coreCompetency", "Skill");
 
+        tableChoices.put("all", "All");
         tableChoices.put("employer", JobData.getAllEmployers());
         tableChoices.put("location", JobData.getAllLocations());
         tableChoices.put("positionType", JobData.getAllPositionTypes());
@@ -35,7 +37,7 @@ public class ListController {
     }
 
     @GetMapping(value = "")
-    public String list(Model model) {
+    public String list(Model model) {// The Model object is used to pass data from the controller to the view
         model.addAttribute("columns", columnChoices);
         model.addAttribute("tableChoices", tableChoices);
         model.addAttribute("employers", JobData.getAllEmployers());
@@ -46,9 +48,9 @@ public class ListController {
         return "list";
     }
 
-    @GetMapping(value = "jobs")
+    @GetMapping(value = "jobs")//Handles requests to list jobs based on specific criteria
     public String listJobsByColumnAndValue(Model model, @RequestParam String column, @RequestParam(required = false) String value) {
-        ArrayList<Job> jobs;
+        ArrayList<Job> jobs; //hold a list of Job objects
         if (column.equals("all")){
             jobs = JobData.findAll();
             model.addAttribute("title", "All Jobs");
@@ -56,9 +58,8 @@ public class ListController {
             jobs = JobData.findByColumnAndValue(column, value);
             model.addAttribute("title", "Jobs with " + columnChoices.get(column) + ": " + value);
         }
-        model.addAttribute("jobs", jobs);
+        model.addAttribute("jobs", jobs); // adds the 'jobs' list to the model
 
-        return "list-jobs";
+        return "list-jobs"; // "list-jobs" should be used to render the response
     }
 }
-
